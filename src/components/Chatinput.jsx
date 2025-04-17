@@ -18,13 +18,13 @@ export default function ChatInput({ onSend }) {
 	};
 
 	return (
-		<div className="flex items-end border-t px-3 py-2 bg-white w-full max-w-screen-md h-16 shadow-md ">
+		<div className="flex sticky bottom-5 items-center justify-center border px-3 py-2 rounded-xl  bg-white w-full max-w-screen-md h-16 shadow-md mx-auto z-10 ">
 			{/* text area for user 2000 text input limit  */}
 			{/* we can set limit from maxLength */}
 			<textarea
 				rows={1}
 				maxLength={2000}
-				className="flex-1 resize-none overflow-hidden px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-200 text-sm"
+				className="flex-1 resize-none overflow-hidden px-3 py-2 w-full  focus:outline-none  text-sm hover:outline-none"
 				placeholder="Type your message (max 2000 chars)..."
 				value={text}
 				onChange={(e) => setText(e.target.value)}

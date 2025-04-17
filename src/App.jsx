@@ -2,7 +2,6 @@
 import { useState } from "react";
 import ChatHeader from "./components/Chatheader";
 import ChatWindow from "./components/Chatwindow";
-import ChatInput from "./components/Chatinput";
 
 function App() {
 	const [messages, setMessages] = useState([
@@ -30,9 +29,15 @@ function App() {
 				...prev,
 				{
 					sender: "bot",
-					text: "What would you like to know more about?",
-					type: "suggestions",
-					options: ["Admission", "Tuition", "Courses"],
+					type: "welcome",
+					text: `Hi, I’m CampusBot, your university assistant. I'm here to answer commonly asked questions.\nI do best when you ask a short question, like "How do I apply?" How can I help you?`,
+					options: [
+						"How do I apply?",
+						"When is tuition due?",
+						"How do I set up parent access?",
+						"How do I register for a campus visit?",
+						"Are test scores optional?",
+					],
 				},
 			]);
 		}, 500);
@@ -54,7 +59,7 @@ function App() {
 
 	return (
 		<>
-			<div className="bg-gray-100">
+			<div className="bg-gray-100 h-[100vh] flex flex-col justify-between">
 				<ChatHeader> </ChatHeader>
 				<ChatWindow
 					messages={messages}
