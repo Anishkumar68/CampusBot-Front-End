@@ -3,6 +3,8 @@ import { useState } from "react";
 import ChatHeader from "./components/Chatheader";
 import ChatWindow from "./components/Chatwindow";
 
+import { sendMessageToBot } from "./services/chatService";
+
 function App() {
 	const [messages, setMessages] = useState([
 		{
@@ -20,27 +22,22 @@ function App() {
 	]);
 
 	// Function to handle the sending of messages
-	const handleSend = (text) => {
+
+	const handleSend = async (text) => {
 		setMessages((prev) => [...prev, { sender: "user", text }]);
 
-		// Simulated bot response with quick buttons
-		setTimeout(() => {
-			setMessages((prev) => [
-				...prev,
-				{
-					sender: "bot",
-					type: "welcome",
-					text: `Hi, I’m CampusBot, your university assistant. I'm here to answer commonly asked questions.\nI do best when you ask a short question, like "How do I apply?" How can I help you?`,
-					options: [
-						"How do I apply?",
-						"When is tuition due?",
-						"How do I set up parent access?",
-						"How do I register for a campus visit?",
-						"Are test scores optional?",
-					],
-				},
-			]);
-		}, 500);
+		setMessages((prev) => [
+			...prev,
+			{ sender: "bot", text: "typing...", type: "loader" },
+		]);
+
+		const botReply = await sendMessageToBot(text);
+
+		setMessages((prev) =>
+			prev
+				.filter((m) => m.type !== "loader")
+				.concat({ sender: "bot", text: botReply })
+		);
 	};
 
 	// Function to handle quick button selection
