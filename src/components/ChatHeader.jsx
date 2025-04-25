@@ -1,23 +1,64 @@
-// Importing React library for building user interfaces
-
-import React from "react";
-import logo from "../assets/logo.png"; // Importing the logo image
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import logo from "../assets/logo.png";
+import { getToken, removeToken } from "../utils/auth";
 
 export default function ChatHeader() {
-	return (
-		// Header for the chat application
-		// This component displays the title of the chat application
+	const [token, setToken] = useState(null);
+	const navigate = useNavigate();
 
-		<div className="flex shadow-md bg-white items-center p-4 z-10 mb-2 sticky w-full h-15">
-			<div className="logo-wrapper flex items-center justify-center">
+	useEffect(() => {
+		const storedToken = getToken();
+		setToken(storedToken);
+	}, []);
+
+	function handleLogout() {
+		removeToken();
+		window.location.href = "/login"; // or use `navigate("/login")`
+	}
+
+	return (
+		<div className="flex shadow-md bg-white items-center p-4 z-10 mb-2 sticky w-full h-15 justify-between">
+			{/* Logo + Title */}
+			<div className="flex items-center">
 				<img
 					src={logo}
-					alt="chatbotlogo.png"
+					alt="chatbotlogo"
 					className="h-auto w-auto max-h-12 max-w-12 object-contain"
 				/>
+				<div className="text-gray-800 font-bold text-3xl ml-4">CampusBot</div>
 			</div>
-			<div className="title-wrapper text-gray-800 font-bold text-3xl ml-4">
-				CampusBot
+
+			{/* Right Side: Auth Buttons */}
+			<div className="flex items-center space-x-4">
+				{token ? (
+					<>
+						<span className="text-sm text-gray-600 truncate max-w-[150px]">
+							Token: {token.slice(0, 10)}...
+						</span>
+						<button
+							className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600 text-sm"
+							onClick={handleLogout}
+						>
+							Logout
+						</button>
+					</>
+				) : (
+					<>
+						<button
+							className="text-blue-600 hover:underline text-sm"
+							onClick={() => navigate("/login")}
+						>
+							Login
+						</button>
+						<button
+							className="text-blue-600 hover:underline text-sm"
+							onClick={() => navigate("/signup")}
+						>
+							Sign Up
+						</button>
+					</>
+				)}
 			</div>
 		</div>
 	);
