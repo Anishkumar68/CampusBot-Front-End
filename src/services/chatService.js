@@ -1,20 +1,41 @@
 import axios from "axios";
-import { getToken } from "../utils/auth";
+import { getToken, isTokenExpired, removeToken } from "../utils/auth";
+import { refreshAccessToken } from "./authService"; // we will build this next
 
 const BASE_URL = "http://localhost:8000";
 const CHAT_API = `${BASE_URL}/chat`;
 
 const HEADERS = () => {
-	const token = getToken();
+	const token =
+		"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsImV4cCI6MTc0NTY1MDYyMX0.8-UrfQHMz8WPQ8uFAHPJmJI678wnE8ucFC7DKn3MDv4";
+	// const token = getToken();
 	return {
 		"Content-Type": "application/json",
 		...(token && { Authorization: `Bearer ${token}` }),
 	};
 };
 
+// ✅ Helper: Automatically refresh token if expired
+async function ensureValidToken() {
+	if (isTokenExpired()) {
+		console.log("Token expired. Trying to refresh...");
+		const success = await refreshAccessToken();
+		if (!success) {
+			console.log("Failed to refresh token. Logging out.");
+			removeToken();
+			window.location.href = "/login";
+			return false;
+		}
+	}
+	return true;
+}
+
 // ✅ Send message to LLM bot
 export async function sendMessageToBot(message, chat_id = null) {
 	try {
+		const valid = await ensureValidToken();
+		if (!valid) return "Session expired. Please log in again.";
+
 		const response = await axios.post(
 			`${CHAT_API}/`,
 			{
@@ -32,92 +53,51 @@ export async function sendMessageToBot(message, chat_id = null) {
 	}
 }
 
+// ✅ Universal GET Helper
+async function apiGet(url) {
+	try {
+		const valid = await ensureValidToken();
+		if (!valid) return [];
+
+		const response = await axios.get(url, { headers: HEADERS() });
+		return response.data;
+	} catch (error) {
+		console.error("API Error:", error.response?.data || error.message);
+		return [];
+	}
+}
+
 // ✅ Get full chat history
-// export async function getChatHistory(chatId) {
-// 	try {
-// 		const response = await axios.get(`${CHAT_API}/history/${chatId}`, {
-// 			headers: HEADERS(),
-// 		});
-// 		return response.data;
-// 	} catch (error) {
-// 		console.error("API Error:", error);
-// 		return [];
-// 	}
-// }
+export async function getChatHistory(chatId) {
+	return apiGet(`${CHAT_API}/history/${chatId}`);
+}
 
-// // ✅ Get all sessions for a user
-// export async function getAllChatSessions(userId) {
-// 	try {
-// 		const response = await axios.get(`${CHAT_API}/sessions/${userId}`, {
-// 			headers: HEADERS(),
-// 		});
-// 		return response.data;
-// 	} catch (error) {
-// 		console.error("API Error:", error);
-// 		return [];
-// 	}
-// }
+// ✅ Get all sessions for a user
+export async function getAllChatSessions(userId) {
+	return apiGet(`${CHAT_API}/sessions/${userId}`);
+}
 
-// // 🔍 Additional Features
+// ✅ Get chat summary
+export async function getChatSummary(chatId) {
+	return apiGet(`${CHAT_API}/summary/${chatId}`);
+}
 
-// export async function getChatSummary(chatId) {
-// 	try {
-// 		const response = await axios.get(`${CHAT_API}/summary/${chatId}`, {
-// 			headers: HEADERS(),
-// 		});
-// 		return response.data;
-// 	} catch (error) {
-// 		console.error("API Error:", error);
-// 		return null;
-// 	}
-// }
+// ✅ Get chat sentiment
+export async function getChatSentiment(chatId) {
+	return apiGet(`${CHAT_API}/sentiment/${chatId}`);
+}
 
-// export async function getChatSentiment(chatId) {
-// 	try {
-// 		const response = await axios.get(`${CHAT_API}/sentiment/${chatId}`, {
-// 			headers: HEADERS(),
-// 		});
-// 		return response.data;
-// 	} catch (error) {
-// 		console.error("API Error:", error);
-// 		return null;
-// 	}
-// }
+// ✅ Get chat intent
+export async function getChatIntent(chatId) {
+	return apiGet(`${CHAT_API}/intent/${chatId}`);
+}
 
-// export async function getChatIntent(chatId) {
-// 	try {
-// 		const response = await axios.get(`${CHAT_API}/intent/${chatId}`, {
-// 			headers: HEADERS(),
-// 		});
-// 		return response.data;
-// 	} catch (error) {
-// 		console.error("API Error:", error);
-// 		return null;
-// 	}
-// }
+// ✅ Get chat entities
+export async function getChatEntities(chatId) {
+	return apiGet(`${CHAT_API}/entities/${chatId}`);
+}
 
-// export async function getChatEntities(chatId) {
-// 	try {
-// 		const response = await axios.get(`${CHAT_API}/entities/${chatId}`, {
-// 			headers: HEADERS(),
-// 		});
-// 		return response.data;
-// 	} catch (error) {
-// 		console.error("API Error:", error);
-// 		return null;
-// 	}
-// }
-
-// export async function getChatTopics(chatId) {
-// 	try {
-// 		const response = await axios.get(`${CHAT_API}/topics/${chatId}`, {
-// 			headers: HEADERS(),
-// 		});
-// 		return response.data;
-// 	} catch (error) {
-// 		console.error("API Error:", error);
-// 		return null;
-// 	}
-// }
-
-// 🧼 Add more functions as your backend supports
+// ✅ Get chat topics
+export async function getChatTopics(chatId) {
+	return apiGet(`${CHAT_API}/topics/${chatId}`);
+}

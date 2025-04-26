@@ -1,16 +1,22 @@
 export function saveToken(token) {
-	console.log("Saving token:", token);
 	localStorage.setItem("token", token);
 }
 
+export function saveRefreshToken(refreshToken) {
+	localStorage.setItem("refresh_token", refreshToken);
+}
+
 export function getToken() {
-	const token = localStorage.getItem("token");
-	console.log("getToken() from auth.js:", token);
-	return token;
+	return localStorage.getItem("token");
+}
+
+export function getRefreshToken() {
+	return localStorage.getItem("refresh_token");
 }
 
 export function removeToken() {
 	localStorage.removeItem("token");
+	localStorage.removeItem("refresh_token");
 }
 
 export function decodeToken() {
@@ -28,4 +34,11 @@ export function decodeToken() {
 export function getUserId() {
 	const payload = decodeToken();
 	return payload?.sub ? parseInt(payload.sub) : null;
+}
+
+export function isTokenExpired() {
+	const payload = decodeToken();
+	if (!payload) return true;
+	const currentTime = Math.floor(Date.now() / 1000);
+	return payload.exp < currentTime;
 }

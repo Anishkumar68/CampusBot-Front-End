@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ uncomment this
-import { saveToken } from "../../utils/auth";
+import { useNavigate } from "react-router-dom";
+import { saveToken, saveRefreshToken, getToken } from "../../utils/auth";
 
 export default function Login() {
 	const [form, setForm] = useState({ email: "", password: "" });
@@ -22,15 +22,16 @@ export default function Login() {
 
 		const data = await res.json();
 
-		if (data.access_token) {
+		if (data.access_token && data.refresh_token) {
 			saveToken(data.access_token);
-			setMsg("Login successful ✅");
-
-			setTimeout(() => {
-				navigate("/chat"); // ✅ redirect works
-			}, 500);
+			saveRefreshToken(data.refresh_token);
+			navigate("/"); // ✅ redirect to home page after login
+		} else if (data.message) {
+			setMsg(data.message); // ✅ show error message
+		} else if (data.detail) {
+			setMsg(data.detail); // ✅ show error message
 		} else {
-			setMsg(data.detail || "Login failed");
+			setMsg("Login failed"); // ✅ fallback error message
 		}
 	};
 
@@ -60,6 +61,12 @@ export default function Login() {
 				</button>
 			</form>
 			{msg && <p className="mt-4 text-center text-blue-700">{msg}</p>}
+			<div className="mt-4 text-center">
+				Don't have an account?{" "}
+				<a href="/signup" className="text-blue-600 hover:underline">
+					Sign up here
+				</a>
+			</div>
 		</div>
 	);
 }

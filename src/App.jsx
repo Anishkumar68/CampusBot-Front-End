@@ -1,15 +1,23 @@
 import { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+	BrowserRouter as Router,
+	Routes,
+	Route,
+	Navigate,
+} from "react-router-dom";
 import Login from "./components/Auth/login";
 import Signup from "./components/Auth/signup";
 import ChatHeader from "./components/ChatHeader";
 import ChatWindow from "./components/Chatwindow";
 import { sendMessageToBot } from "./services/chatService";
-import { getToken } from "./utils/auth";
-import { Navigate } from "react-router-dom";
+import { getToken, isTokenExpired, removeToken } from "./utils/auth";
 
 function PrivateRoute({ children }) {
-	return getToken() ? children : <Navigate to="/login" />;
+	if (!getToken() || isTokenExpired()) {
+		removeToken();
+		return <Navigate to="/login" />;
+	}
+	return children;
 }
 
 function ChatPage() {
@@ -64,18 +72,16 @@ function App() {
 	return (
 		<Router>
 			<Routes>
-				{/* <Route path="/" element={<ChatPage />} /> */}
-
+				<Route path="/login" element={<Login />} />
+				<Route path="/signup" element={<Signup />} />
 				<Route
-					path="/chat"
+					path="/"
 					element={
 						<PrivateRoute>
 							<ChatPage />
 						</PrivateRoute>
 					}
 				/>
-				<Route path="/login" element={<Login />} />
-				<Route path="/signup" element={<Signup />} />
 			</Routes>
 		</Router>
 	);
