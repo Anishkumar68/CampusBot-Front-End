@@ -6,9 +6,7 @@ const BASE_URL = "http://localhost:8000";
 const CHAT_API = `${BASE_URL}/chat`;
 
 const HEADERS = () => {
-	const token =
-		"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsImV4cCI6MTc0NTY1MDYyMX0.8-UrfQHMz8WPQ8uFAHPJmJI678wnE8ucFC7DKn3MDv4";
-	// const token = getToken();
+	const token = getToken();
 	return {
 		"Content-Type": "application/json",
 		...(token && { Authorization: `Bearer ${token}` }),
@@ -41,7 +39,7 @@ export async function sendMessageToBot(message, chat_id = null) {
 			{
 				message,
 				chat_id,
-				model: "gpt-4o-mini", // or "huggingface"
+				model: "openai", // or "huggingface"
 				temperature: 0.7,
 			},
 			{ headers: HEADERS() }

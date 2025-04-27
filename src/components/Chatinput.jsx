@@ -11,29 +11,41 @@ export default function ChatInput({ onSend, chatId }) {
 		const token = getToken();
 		setLoading(true);
 
-		const res = await fetch("http://localhost:8000/chat/", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				...(token && { Authorization: `Bearer ${token}` }),
-			},
-			body: JSON.stringify({
-				message: text,
-				chat_id: chatId,
-				model: "openai",
-				temperature: 0.7,
-			}),
-		});
+		try {
+			const res = await fetch("http://localhost:8000/chat", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					...(token && { Authorization: `Bearer ${token}` }),
+				},
+				body: JSON.stringify({
+					message: text,
+					chat_id: chatId,
+					model: "gpt-4o-mini",
+					temperature: 0.7,
+				}),
+			});
 
-		const data = await res.json();
+			if (!res.ok) {
+				throw new Error("Failed to send message");
+			}
 
-		onSend({
-			user: text,
-			bot: data.response || "Sorry, no response.",
-		});
+			const data = await res.json();
 
-		setText("");
-		setLoading(false);
+			onSend({
+				user: text,
+				bot: data.response || "Sorry, no response.",
+			});
+		} catch (error) {
+			console.error("Send message error:", error);
+			onSend({
+				user: text,
+				bot: "Server Error. Try again later.",
+			});
+		} finally {
+			setText(""); // ✅ always clear text
+			setLoading(false); // ✅ always reset loading
+		}
 	};
 
 	return (
