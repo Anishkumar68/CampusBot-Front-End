@@ -40,7 +40,7 @@ export default function ChatWindow({ messages, onQuickSelect, onSend }) {
 						<div key={idx}>
 							{msg.type === "welcome" ? (
 								<div className="flex flex-col gap-2 border border-gray-300 rounded-lg p-4 mb-4 bg-gray-50">
-									{/* Bot Welcome Message */}
+									{/* Bot Welcome Avatar and Time */}
 									<div className="flex items-center gap-2">
 										<img
 											src="https://api.dicebear.com/7.x/bottts/svg?seed=bot"
@@ -57,10 +57,12 @@ export default function ChatWindow({ messages, onQuickSelect, onSend }) {
 										</span>
 									</div>
 
+									{/* Welcome Message */}
 									<div className="text-black p-4 whitespace-pre-wrap border-b-2 border-gray-300 w-full">
 										{msg.text}
 									</div>
 
+									{/* Welcome Options */}
 									<div className="text-center w-full mt-4">
 										<h3 className="text-md font-semibold text-gray-800 mb-3">
 											Topics I Can Help With
@@ -80,22 +82,66 @@ export default function ChatWindow({ messages, onQuickSelect, onSend }) {
 								</div>
 							) : msg.type === "loader" ? (
 								<div className="flex justify-start my-2">
-									{/* Loader aligned like bot */}
 									<div className="bg-gray-200 text-gray-600 px-3 py-1 rounded-lg text-sm">
 										Bot is typing...
 									</div>
 								</div>
 							) : (
-								<ChatMessage
-									sender={msg.sender}
-									message={
-										typeof msg.text === "string"
-											? msg.text
-											: JSON.stringify(msg.text)
-									}
-									options={msg.options}
-									onQuickSelect={handleQuickSelect}
-								/>
+								<div className="flex flex-col gap-2 border border-gray-300 rounded-lg p-4 mb-4 bg-gray-50">
+									{/* Normal Bot/User Message */}
+									<div className="flex items-center gap-2">
+										<img
+											src={
+												msg.sender === "user"
+													? "https://api.dicebear.com/7.x/thumbs/svg?seed=user"
+													: "https://api.dicebear.com/7.x/bottts/svg?seed=bot"
+											}
+											alt={`${msg.sender} Avatar`}
+											className="w-8 h-8 rounded-full"
+										/>
+										<span className="text-xs text-gray-500">
+											(
+											{new Date().toLocaleTimeString([], {
+												hour: "2-digit",
+												minute: "2-digit",
+											})}
+											)
+										</span>
+									</div>
+
+									<div className="text-black p-4 whitespace-pre-wrap border-b-2 border-gray-300 w-full">
+										<ChatMessage
+											sender={msg.sender}
+											message={
+												typeof msg.text === "string"
+													? msg.text
+													: JSON.stringify(msg.text)
+											}
+											options={msg.options}
+											onQuickSelect={handleQuickSelect}
+										/>
+									</div>
+
+									{/* ONLY if options exist */}
+									{msg.options && msg.options.length > 0 && (
+										<div className="text-center w-full mt-4">
+											<h3 className="text-md font-semibold text-gray-800 mb-3">
+												Topics I Can Help With
+											</h3>
+											<div className="flex flex-wrap justify-center gap-2">
+												{msg.options.map((option, i) => (
+													<button
+														key={i}
+														onClick={() => handleQuickSelect(option)}
+														className="px-4 py-1 border-2 border-blue-500 text-blue-600 rounded-full hover:bg-blue-100 transition"
+													>
+														{option}
+													</button>
+												))}
+											</div>
+										</div>
+									)}
+								</div>
 							)}
 						</div>
 					))}
