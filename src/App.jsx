@@ -9,8 +9,8 @@ import Login from "./components/Auth/login";
 import Signup from "./components/Auth/signup";
 import ChatHeader from "./components/ChatHeader";
 import ChatWindow from "./components/Chatwindow";
-import { sendMessageToBot } from "./services/chatService";
 import { getToken, isTokenExpired, removeToken } from "./utils/auth";
+import { API_BASE_URL } from "./components/config";
 
 function PrivateRoute({ children }) {
 	if (!getToken() || isTokenExpired()) {
@@ -36,20 +36,50 @@ function ChatPage() {
 		},
 	]);
 
-	const handleSend = async (text) => {
-		setMessages((prev) => [...prev, { sender: "user", text }]);
+	// ✅ Corrected handleSend
+	const handleSend = async (userText) => {
+		// Add User Message first
+		setMessages((prev) => [...prev, { sender: "user", text: userText }]);
+		// Add loader for bot
 		setMessages((prev) => [
 			...prev,
 			{ sender: "bot", text: "typing...", type: "loader" },
 		]);
 
-		const botReply = await sendMessageToBot(text);
+		try {
+			const token = getToken();
 
-		setMessages((prev) =>
-			prev
-				.filter((m) => m.type !== "loader")
-				.concat({ sender: "bot", text: botReply })
-		);
+			const response = await fetch(`${API_BASE_URL}/chat/`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					...(token && { Authorization: `Bearer ${token}` }),
+				},
+				body: JSON.stringify({
+					message: userText,
+					model: "openai", // You can adjust this if you want to switch model
+					temperature: 0.7,
+				}),
+			});
+
+			const data = await response.json();
+
+			let botText = data?.response || "Sorry, no reply received.";
+
+			// Remove loader and add Bot Message
+			setMessages((prev) =>
+				prev
+					.filter((m) => m.type !== "loader")
+					.concat({ sender: "bot", text: botText })
+			);
+		} catch (error) {
+			console.error("Send message error:", error.message);
+			setMessages((prev) =>
+				prev
+					.filter((m) => m.type !== "loader")
+					.concat({ sender: "bot", text: "Server Error. Please try again." })
+			);
+		}
 	};
 
 	const handleQuickSelect = (option) => {

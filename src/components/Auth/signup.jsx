@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { saveToken, saveRefreshToken } from "../../utils/auth";
+import { API_BASE_URL } from "../config"; // Update this import to match your project structure
 
 export default function Signup() {
 	const [form, setForm] = useState({ email: "", full_name: "", password: "" });
@@ -9,7 +12,7 @@ export default function Signup() {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		const res = await fetch("http://localhost:8000/auth/register", {
+		const res = await fetch(`${API_BASE_URL}/auth/register`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify(form),

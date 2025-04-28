@@ -2,7 +2,10 @@ import axios from "axios";
 import { getToken, isTokenExpired, removeToken } from "../utils/auth";
 import { refreshAccessToken } from "./authService"; // we will build this next
 
-const BASE_URL = "http://localhost:8000";
+// ✅ API Base URL
+import { API_BASE_URL } from "../components/config"; // Update this import to match your project structure
+
+const BASE_URL = API_BASE_URL; // Fallback to localhost if not set
 const CHAT_API = `${BASE_URL}/chat`;
 
 const HEADERS = () => {
@@ -35,7 +38,7 @@ export async function sendMessageToBot(message, chat_id = null) {
 		if (!valid) return "Session expired. Please log in again.";
 
 		const response = await axios.post(
-			`${CHAT_API}/`,
+			`${CHAT_API}`,
 			{
 				message,
 				chat_id,
