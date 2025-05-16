@@ -1,12 +1,11 @@
 import axios from "axios";
 import { getToken, isTokenExpired, removeToken } from "../utils/auth";
-import { refreshAccessToken } from "./authService"; // we will build this next
-
-// ✅ API Base URL
-import { API_BASE_URL } from "../components/config"; // Update this import to match your project structure
+import { refreshAccessToken } from "./authService";
+import { getRefreshToken } from "../utils/auth";
+import { API_BASE_URL } from "../components/config";
 
 const BASE_URL = API_BASE_URL; // Fallback to localhost if not set
-const CHAT_API = `${BASE_URL}/chat`;
+const CHAT_API = `${API_BASE_URL}/chat`;
 
 const HEADERS = () => {
 	const token = getToken();

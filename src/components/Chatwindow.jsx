@@ -1,5 +1,6 @@
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./Chatinput";
+import QuickButtons from "./QuickButtons";
 import { useRef, useEffect, useState } from "react";
 
 export default function ChatWindow({ messages, onQuickSelect, onSend }) {
@@ -21,9 +22,9 @@ export default function ChatWindow({ messages, onQuickSelect, onSend }) {
 		bottomRef.current?.scrollIntoView({ behavior: "smooth" });
 	};
 
-	const handleQuickSelect = (option) => {
+	const handleQuickSelect = (option, index) => {
 		if (onQuickSelect) {
-			onQuickSelect(option);
+			onQuickSelect(option, index);
 		}
 	};
 
@@ -40,7 +41,6 @@ export default function ChatWindow({ messages, onQuickSelect, onSend }) {
 						<div key={idx}>
 							{msg.type === "welcome" ? (
 								<div className="flex flex-col gap-2 border border-gray-300 rounded-lg p-4 mb-4 bg-gray-50">
-									{/* Bot Welcome Message */}
 									<div className="flex items-center gap-2">
 										<img
 											src="https://api.dicebear.com/7.x/bottts/svg?seed=bot"
@@ -66,11 +66,12 @@ export default function ChatWindow({ messages, onQuickSelect, onSend }) {
 											Topics I Can Help With
 										</h3>
 										<div className="flex flex-wrap justify-center gap-2">
-											{msg.options.map((option, i) => (
+											{msg.options?.map((option, i) => (
 												<button
 													key={i}
-													onClick={() => handleQuickSelect(option)}
+													onClick={() => handleQuickSelect(option, idx)}
 													className="px-4 py-1 border-2 border-blue-500 text-blue-600 rounded-full hover:bg-blue-100 transition"
+													disabled={msg.followupsEnabled === false}
 												>
 													{option}
 												</button>
@@ -80,26 +81,34 @@ export default function ChatWindow({ messages, onQuickSelect, onSend }) {
 								</div>
 							) : msg.type === "loader" ? (
 								<div className="flex justify-start my-2">
-									{/* Loader aligned like bot */}
 									<div className="bg-gray-200 text-gray-600 px-3 py-1 rounded-lg text-sm">
 										Bot is typing...
 									</div>
 								</div>
 							) : (
-								<ChatMessage
-									sender={msg.sender}
-									message={
-										typeof msg.text === "string"
-											? msg.text
-											: JSON.stringify(msg.text)
-									}
-									options={msg.options}
-									onQuickSelect={handleQuickSelect}
-								/>
+								<>
+									<ChatMessage
+										sender={msg.sender}
+										message={
+											typeof msg.text === "string"
+												? msg.text
+												: JSON.stringify(msg.text)
+										}
+										options={msg.options}
+										onQuickSelect={(text) => handleQuickSelect(text, idx)}
+									/>
+									{msg.sender === "bot" && msg.followups && (
+										<QuickButtons
+											followups={msg.followups}
+											followupsEnabled={msg.followupsEnabled}
+											msgIndex={idx}
+											onQuickSelect={handleQuickSelect}
+										/>
+									)}
+								</>
 							)}
 						</div>
 					))}
-
 					<div ref={bottomRef} />
 				</div>
 

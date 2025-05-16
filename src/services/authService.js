@@ -1,6 +1,6 @@
 import { getRefreshToken, saveToken, removeToken } from "../utils/auth";
 
-const BASE_URL = "http://localhost:8000";
+import { API_BASE_URL } from "../components/config";
 
 export async function refreshAccessToken() {
 	try {
@@ -10,7 +10,7 @@ export async function refreshAccessToken() {
 			return false;
 		}
 
-		const response = await fetch(`${BASE_URL}/auth/refresh`, {
+		const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ refresh_token: refreshToken }),
