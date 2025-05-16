@@ -1,6 +1,7 @@
 import React from "react";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
+import { formatBotMessage } from "../utils/ChatFormatter";
 
 const botAvatar = "https://api.dicebear.com/7.x/bottts/svg?seed=bot";
 const userAvatar = "https://api.dicebear.com/7.x/thumbs/svg?seed=user";
@@ -12,38 +13,43 @@ export default function ChatMessage({ sender, message }) {
 		message = JSON.stringify(message);
 	}
 
-	// Clean extra new lines
-	const cleanedMessage = message.replace(/\n\s*\n/g, "\n");
+	const finalMessage = isUser ? message : formatBotMessage(message);
 
-	// Convert Markdown to safe HTML
-	const html = DOMPurify.sanitize(marked.parse(cleanedMessage));
+	const html = DOMPurify.sanitize(
+		marked.parse(finalMessage, {
+			headerIds: false,
+			mangle: false,
+		})
+	);
 
-	return (
-		<div className={`flex ${isUser ? "justify-end" : "justify-start"} mb-2`}>
-			{!isUser && (
-				<img
-					src={botAvatar}
-					alt="Bot Avatar"
-					className="w-8 h-8 rounded-full mr-2"
+	if (isUser) {
+		return (
+			<div className="flex items-start justify-end gap-2 px-4 my-2">
+				<div
+					className="flex flex-col w-fit text-base p-3 text-start bg-blue-100 text-gray-800 rounded-2xl rounded-br-none whitespace-pre-wrap break-words max-w-2xl"
+					dangerouslySetInnerHTML={{ __html: html }}
 				/>
-			)}
-
-			<div
-				className={`p-3 text-sm shadow-md ${
-					isUser
-						? "bg-gray-300 text-black rounded-full max-w-xs"
-						: "bg-gray-100 text-gray-900 border border-gray-300 rounded-lg max-w-2xl prose prose-sm"
-				}`}
-				dangerouslySetInnerHTML={{ __html: html }}
-			/>
-
-			{isUser && (
 				<img
 					src={userAvatar}
 					alt="User Avatar"
-					className="w-8 h-8 rounded-full ml-2"
+					className="w-8 h-8 rounded-full shadow"
 				/>
-			)}
+			</div>
+		);
+	}
+
+	// BOT message
+	return (
+		<div className="flex items-start justify-start gap-3 px-4 my-4">
+			<img
+				src={botAvatar}
+				alt="Bot Avatar"
+				className="w-9 h-9 rounded-full shadow-sm"
+			/>
+			<div
+				className="markdown-body text-sm leading-7 bg-white border border-gray-300 shadow-sm rounded-xl p-4 max-w-3xl w-full prose prose-gray prose-headings:font-semibold prose-h3:text-lg prose-ul:list-disc prose-li:ml-6 whitespace-pre-wrap break-words"
+				dangerouslySetInnerHTML={{ __html: html }}
+			/>
 		</div>
 	);
 }
