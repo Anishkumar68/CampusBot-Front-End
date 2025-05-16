@@ -70,7 +70,11 @@ export default function ChatWindow({ messages, onQuickSelect, onSend }) {
 												<button
 													key={i}
 													onClick={() => handleQuickSelect(option, idx)}
-													className="px-4 py-1 border-2 border-blue-500 text-blue-600 rounded-full hover:bg-blue-100 transition"
+													className={`px-4 py-1 border-2 border-blue-500 text-blue-600 rounded-full hover:bg-blue-100 transition ${
+														msg.followupsEnabled === false
+															? "opacity-50 cursor-not-allowed"
+															: ""
+													}`}
 													disabled={msg.followupsEnabled === false}
 												>
 													{option}
@@ -84,19 +88,20 @@ export default function ChatWindow({ messages, onQuickSelect, onSend }) {
 									<div className="bg-gray-200 text-gray-600 px-3 py-1 rounded-lg text-sm">
 										Bot is typing...
 									</div>
+									{/* Auto-scroll when loader appears */}
+									{scrollToBottom()}
 								</div>
 							) : (
 								<>
 									<ChatMessage
 										sender={msg.sender}
-										message={
-											typeof msg.text === "string"
-												? msg.text
-												: JSON.stringify(msg.text)
-										}
-										options={msg.options}
-										onQuickSelect={(text) => handleQuickSelect(text, idx)}
+										message={msg.text}
+										followups={msg.followups}
+										followupsEnabled={msg.followupsEnabled}
+										msgIndex={idx}
+										onQuickSelect={handleQuickSelect}
 									/>
+
 									{msg.sender === "bot" && msg.followups && (
 										<QuickButtons
 											followups={msg.followups}

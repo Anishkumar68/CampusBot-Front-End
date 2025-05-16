@@ -9,7 +9,7 @@ export default function ChatPage() {
 		{
 			sender: "bot",
 			type: "welcome",
-			text: `Hi, I’m CampusBot, your university assistant. I'm here to answer commonly asked questions.\nI do best when you ask a short question, like \"How do I apply?\" How can I help you?`,
+			text: `Hi, I’m CampusBot, your university assistant. I'm here to answer commonly asked questions.\nI do best when you ask a short question, like "How do I apply?" How can I help you?`,
 			options: [
 				"How do I apply?",
 				"When is tuition due?",
@@ -17,12 +17,14 @@ export default function ChatPage() {
 				"How do I register for a campus visit?",
 				"Are test scores optional?",
 			],
+			followupsEnabled: true,
 		},
 	]);
 
 	const handleSend = async (userText) => {
 		if (!userText?.trim()) return;
 
+		// Add user message and bot loader
 		setMessages((prev) => [
 			...prev,
 			{ sender: "user", text: userText },
@@ -31,6 +33,7 @@ export default function ChatPage() {
 
 		try {
 			const token = getToken();
+
 			const response = await fetch(`${API_BASE_URL}/chat`, {
 				method: "POST",
 				headers: {
@@ -46,10 +49,22 @@ export default function ChatPage() {
 
 			const data = await response.json();
 			const botReply = data?.response || "Sorry, no reply received.";
+			const followups = data?.followups || {};
 
+			console.log("🤖 Bot Reply:", botReply);
+			console.log("💡 Follow-ups:", followups);
+
+			// Replace loader with bot message
 			setMessages((prev) =>
 				prev.map((msg) =>
-					msg.type === "loader" ? { sender: "bot", text: botReply } : msg
+					msg.type === "loader"
+						? {
+								sender: "bot",
+								text: botReply,
+								followups,
+								followupsEnabled: true,
+						  }
+						: msg
 				)
 			);
 		} catch (error) {
@@ -57,14 +72,23 @@ export default function ChatPage() {
 			setMessages((prev) =>
 				prev.map((msg) =>
 					msg.type === "loader"
-						? { sender: "bot", text: "Server Error. Please try again later." }
+						? {
+								sender: "bot",
+								text: "Server Error. Please try again later.",
+						  }
 						: msg
 				)
 			);
 		}
 	};
 
-	const handleQuickSelect = (optionText) => {
+	// 🔁 Handles when user clicks a follow-up suggestion
+	const handleQuickSelect = (optionText, msgIndex) => {
+		setMessages((prev) =>
+			prev.map((msg, idx) =>
+				idx === msgIndex ? { ...msg, followupsEnabled: false } : msg
+			)
+		);
 		handleSend(optionText);
 	};
 
