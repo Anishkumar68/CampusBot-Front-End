@@ -46,21 +46,13 @@ export default function ChatMessage({ sender, message }) {
 			/>
 			<div
 				className="
-					markdown-body prose prose-gray max-w-2xl w-fit text-gray-800
-					bg-gray-100 rounded-2xl rounded-tl-none p-3
-					whitespace-pre-wrap break-words shadow-sm
-
-					prose-h1:text-3xl prose-h2:text-2xl prose-headings:font-semibold
-					prose-p:leading-relaxed prose-p:mb-2
-					prose-a:text-blue-600 prose-a:underline
-					prose-ul:list-disc prose-ul:pl-5
-					prose-ol:list-decimal prose-ol:pl-5
-					prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-blockquote:italic
-					prose-code:bg-gray-200 prose-code:p-1 prose-code:rounded-md prose-code:text-sm
-					prose-pre:bg-gray-200 prose-pre:p-3 prose-pre:rounded-md prose-pre:overflow-x-auto prose-pre:whitespace-pre-wrap
-					prose-table:table-auto prose-table:divide-y prose-table:divide-gray-300 prose-table:text-sm
-					prose-hr:my-4
-					prose-img:rounded-lg prose-img:max-w-full
+				flex flex-col w-fit max-w-2xl p-4 text-base bg-gray-100 text-gray-800 rounded-2xl rounded-bl-none whitespace-pre-wrap break-words
+				shadow-md border border-gray-300 prose prose-sm prose-gray
+				prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
+				prose-headings:font-semibold prose-headings:text-gray-900 prose-headings:my-0
+				prose-p:my-0 prose-p:leading-relaxed prose-ul:my-0 prose-ol:my-0
+				prose-li:my-0 prose-li:leading-relaxed prose-blockquote:my-0
+				prose-hr:my-0 prose-pre:bg-gray-800 prose-pre:rounded prose-pre:overflow-x-auto prose-pre:font-mono prose-pre:text-sm cursor-text
 				"
 				dangerouslySetInnerHTML={{ __html: html }}
 			/>
