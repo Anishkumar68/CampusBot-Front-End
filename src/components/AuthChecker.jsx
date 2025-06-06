@@ -1,16 +1,19 @@
-// components/AuthChecker.jsx
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getToken, isTokenExpired, removeToken } from "../utils/auth";
 import { refreshAccessToken } from "../services/authService";
 
 export default function AuthChecker() {
 	const navigate = useNavigate();
+	const location = useLocation();
 
 	useEffect(() => {
+		const shouldProtect = ["/"];
+		if (!shouldProtect.includes(location.pathname)) return;
+
 		async function checkSession() {
 			const token = getToken();
-			if (!token || isTokenExpired(token)) {
+			if (!token || isTokenExpired()) {
 				const refreshed = await refreshAccessToken();
 				if (!refreshed) {
 					removeToken();
@@ -18,8 +21,9 @@ export default function AuthChecker() {
 				}
 			}
 		}
+
 		checkSession();
-	}, []);
+	}, [location.pathname]);
 
 	return null;
 }
