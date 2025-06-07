@@ -8,7 +8,7 @@ import {
 import { refreshAccessToken } from "./authService";
 import { API_BASE_URL } from "../components/config";
 
-const CHAT_API = `${API_BASE_URL}/chat`;
+const CHAT_API = `${API_BASE_URL}/chat/`;
 
 const HEADERS = () => {
 	const token = getToken();
@@ -20,10 +20,10 @@ const HEADERS = () => {
 
 async function ensureValidToken() {
 	if (isTokenExpired()) {
-		console.log("Token expired. Trying to refresh...");
+		console.log("🔄 Token expired. Refreshing...");
 		const success = await refreshAccessToken();
 		if (!success) {
-			console.log("Failed to refresh token. Logging out.");
+			console.log("❌ Refresh failed. Redirecting to login...");
 			removeToken();
 			window.location.href = "/login";
 			return false;
@@ -35,7 +35,7 @@ async function ensureValidToken() {
 export async function sendMessageToBot(message, chat_id = null) {
 	try {
 		const valid = await ensureValidToken();
-		if (!valid) return "Session expired. Please log in again.";
+		if (!valid) return { success: false, error: "Session expired." };
 
 		const response = await axios.post(
 			CHAT_API,
@@ -47,7 +47,7 @@ export async function sendMessageToBot(message, chat_id = null) {
 			},
 			{ headers: HEADERS() }
 		);
-		return response.data.response;
+		return { success: true, response: response.data.response };
 	} catch (error) {
 		console.error("API Error:", error.response?.data || error.message);
 
@@ -56,7 +56,10 @@ export async function sendMessageToBot(message, chat_id = null) {
 			window.location.href = "/login";
 		}
 
-		return "Sorry, I couldn't connect to the server.";
+		return {
+			success: false,
+			error: "Sorry, I couldn't connect to the server.",
+		};
 	}
 }
 
