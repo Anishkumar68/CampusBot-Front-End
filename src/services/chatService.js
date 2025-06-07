@@ -1,10 +1,13 @@
 import axios from "axios";
-import { getToken, isTokenExpired, removeToken } from "../utils/auth";
+import {
+	getToken,
+	isTokenExpired,
+	removeToken,
+	getRefreshToken,
+} from "../utils/auth";
 import { refreshAccessToken } from "./authService";
-import { getRefreshToken } from "../utils/auth";
 import { API_BASE_URL } from "../components/config";
 
-const BASE_URL = API_BASE_URL; // Fallback to localhost if not set
 const CHAT_API = `${API_BASE_URL}/chat`;
 
 const HEADERS = () => {
@@ -15,7 +18,6 @@ const HEADERS = () => {
 	};
 };
 
-// ✅ Helper: Automatically refresh token if expired
 async function ensureValidToken() {
 	if (isTokenExpired()) {
 		console.log("Token expired. Trying to refresh...");
@@ -30,18 +32,17 @@ async function ensureValidToken() {
 	return true;
 }
 
-// ✅ Send message to LLM bot
 export async function sendMessageToBot(message, chat_id = null) {
 	try {
 		const valid = await ensureValidToken();
 		if (!valid) return "Session expired. Please log in again.";
 
 		const response = await axios.post(
-			`${CHAT_API}`,
+			CHAT_API,
 			{
 				message,
 				chat_id,
-				model: "openai", // or "huggingface"
+				model: "openai",
 				temperature: 0.7,
 			},
 			{ headers: HEADERS() }
@@ -49,6 +50,12 @@ export async function sendMessageToBot(message, chat_id = null) {
 		return response.data.response;
 	} catch (error) {
 		console.error("API Error:", error.response?.data || error.message);
+
+		if (error.response?.status === 401) {
+			removeToken();
+			window.location.href = "/login";
+		}
+
 		return "Sorry, I couldn't connect to the server.";
 	}
 }
