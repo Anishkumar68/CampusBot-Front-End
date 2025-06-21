@@ -8,7 +8,7 @@ import {
 import { refreshAccessToken } from "./authService";
 import { API_BASE_URL } from "../components/config";
 
-const CHAT_API = `${API_BASE_URL}/chat`;
+const CHAT_API = `${API_BASE_URL}/chat/`;
 
 const HEADERS = () => {
 	const token = getToken();
