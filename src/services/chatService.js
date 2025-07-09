@@ -111,3 +111,67 @@ export async function getChatEntities(chatId) {
 export async function getChatTopics(chatId) {
 	return apiGet(`${CHAT_API}/topics/${chatId}`);
 }
+
+export async function createNewChatSession(userId) {
+	try {
+		const valid = await ensureValidToken();
+		if (!valid) return null;
+
+		const response = await axios.post(
+			`${CHAT_API}/sessions`,
+			{ user_id: userId },
+			{ headers: HEADERS() }
+		);
+		return response.data;
+	} catch (error) {
+		console.error("API Error:", error.response?.data || error.message);
+		return null;
+	}
+}
+
+export async function deleteChatSession(sessionId) {
+	try {
+		const valid = await ensureValidToken();
+		if (!valid) return false;
+
+		await axios.delete(`${CHAT_API}/sessions/${sessionId}`, {
+			headers: HEADERS(),
+		});
+		return true;
+	} catch (error) {
+		console.error("API Error:", error.response?.data || error.message);
+		return false;
+	}
+}
+
+export async function updateChatSessionTitle(sessionId, title) {
+	try {
+		const valid = await ensureValidToken();
+		if (!valid) return false;
+
+		await axios.put(
+			`${CHAT_API}/sessions/${sessionId}`,
+			{ title },
+			{ headers: HEADERS() }
+		);
+		return true;
+	} catch (error) {
+		console.error("API Error:", error.response?.data || error.message);
+		return false;
+	}
+}
+
+export async function getChatFollowups(chatId) {
+	try {
+		const valid = await ensureValidToken();
+		if (!valid) return {};
+
+		const response = await axios.get(`${CHAT_API}/followups/${chatId}`, {
+			headers: HEADERS(),
+		});
+		return response.data;
+	} catch (error) {
+		console.error("API Error:", error.response?.data || error.message);
+		return {};
+	}
+}

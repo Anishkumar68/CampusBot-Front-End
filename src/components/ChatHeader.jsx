@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { getToken, removeToken } from "../utils/auth";
-
+import { getUserName } from "../utils/auth";
 export default function ChatHeader() {
+	const userName = getUserName();
 	const [token, setToken] = useState(null);
 	const navigate = useNavigate();
 
@@ -34,7 +35,7 @@ export default function ChatHeader() {
 				{token ? (
 					<>
 						<span className="text-sm text-gray-600 truncate max-w-[150px]">
-							Token: {token.slice(0, 10)}...
+							{userName}
 						</span>
 						<button
 							className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600 text-sm"

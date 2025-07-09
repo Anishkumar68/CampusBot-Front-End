@@ -31,9 +31,23 @@ export function decodeToken() {
 	}
 }
 
+export function getUserName() {
+	const payload = decodeToken();
+	return payload?.name || payload?.email || "User";
+}
+
 export function getUserId() {
 	const payload = decodeToken();
 	return payload?.sub ? parseInt(payload.sub) : null;
+}
+
+export function isLoggedIn() {
+	const token = getToken();
+	if (!token) return false;
+	const payload = decodeToken();
+	if (!payload) return false;
+	const currentTime = Math.floor(Date.now() / 1000);
+	return payload.exp > currentTime;
 }
 
 export function isTokenExpired() {
