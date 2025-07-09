@@ -29,8 +29,8 @@ export default function ChatWindow({ messages, onQuickSelect, onSend }) {
 	};
 
 	return (
-		<div className="flex flex-col items-center justify-start h-screen bg-gray-100">
-			<div className="relative flex flex-col justify-between h-[90vh] w-full max-w-3xl border rounded-lg shadow-md bg-white">
+		<div className="flex flex-col items-center justify-start h-screen bg-gray-100 ">
+			<div className="relative flex flex-col justify-between h-[90vh] w-full top-0 max-w-3xl ">
 				{/* Message Area */}
 				<div
 					ref={scrollRef}
@@ -129,7 +129,7 @@ export default function ChatWindow({ messages, onQuickSelect, onSend }) {
 				)}
 
 				{/* Input Area */}
-				<div className="p-2 border-t bg-white rounded-b-lg">
+				<div className="flex ">
 					<ChatInput onSend={onSend} />
 				</div>
 			</div>

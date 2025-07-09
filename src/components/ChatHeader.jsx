@@ -19,7 +19,7 @@ export default function ChatHeader() {
 	}
 
 	return (
-		<div className="flex shadow-md bg-white items-center p-4 z-10 mb-2 sticky w-full h-15 justify-between">
+		<div className="flex items-center p-4 z-10 mb-2 sticky w-full h-15 justify-between">
 			{/* Logo + Title */}
 			<div className="flex items-center">
 				<img
