@@ -75,10 +75,16 @@ export default function ChatPage() {
 			},
 		})
 			.then((res) => {
+				if (res.status === 404) {
+					console.warn("No messages yet — new session.");
+					// Do not overwrite the existing welcome message
+					return null;
+				}
 				if (!res.ok) throw new Error(`Failed to load messages: ${res.status}`);
 				return res.json();
 			})
 			.then((data) => {
+				if (data === null) return; // skip if 404
 				if (Array.isArray(data)) {
 					setMessages(
 						data.map((m) => ({
@@ -88,13 +94,12 @@ export default function ChatPage() {
 						}))
 					);
 				} else {
-					console.warn("Messages response not an array:", data);
-					setMessages([]);
+					console.warn("Unexpected messages data format:", data);
 				}
 			})
 			.catch((err) => {
 				console.error(err);
-				setMessages([]);
+				// Optional: keep existing messages or show UI alert
 			});
 	}, [activeId, token]);
 

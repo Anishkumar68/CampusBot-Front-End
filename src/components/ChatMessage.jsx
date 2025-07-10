@@ -3,7 +3,7 @@ import { marked } from "marked";
 import DOMPurify from "dompurify";
 import { formatBotMessage } from "../utils/ChatFormatter";
 
-const botAvatar = "https://api.dicebear.com/7.x/bottts/svg?seed=bot";
+const botAvatar = "/logo.png";
 const userAvatar = "https://api.dicebear.com/7.x/thumbs/svg?seed=user";
 
 export default function ChatMessage({ sender, message }) {
@@ -46,7 +46,7 @@ export default function ChatMessage({ sender, message }) {
 			/>
 			<div
 				className="
-				flex flex-col w-fit max-w-2xl p-4 text-base bg-gray-100 text-gray-800
+				flex flex-col w-fit max-w-2xl p-4 text-base  text-black
     rounded-2xl rounded-bl-none whitespace-pre-wrap break-words shadow-md border border-gray-300
 
     prose prose-sm prose-gray
