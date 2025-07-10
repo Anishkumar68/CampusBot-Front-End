@@ -12,6 +12,7 @@
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "axios": "^1.8.4",
+    "clsx": "^2.1.1",
     "dompurify": "^3.2.5",
     "lucide-react": "^0.525.0",
     "marked": "^15.0.12",

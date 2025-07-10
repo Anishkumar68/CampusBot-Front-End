@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/logo.png";
+import logo from "../assets/chatbotLogo.png";
 import { getToken, removeToken } from "../utils/auth";
 import { getUserName } from "../utils/auth";
 export default function ChatHeader() {

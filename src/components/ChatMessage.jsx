@@ -3,7 +3,7 @@ import { marked } from "marked";
 import DOMPurify from "dompurify";
 import { formatBotMessage } from "../utils/ChatFormatter";
 
-const botAvatar = "/logo.png";
+const botAvatar = "https://api.dicebear.com/7.x/bottts/svg?seed=bot";
 const userAvatar = "https://api.dicebear.com/7.x/thumbs/svg?seed=user";
 
 export default function ChatMessage({ sender, message }) {
@@ -64,3 +64,24 @@ export default function ChatMessage({ sender, message }) {
 		</div>
 	);
 }
+
+// import MessageBubble from "./MessageBubble";
+// import { marked } from "marked"; // optional for markdown to HTML
+
+// function ChatWindow({ messages }) {
+// 	const botAvatar = "../assets/chatbotLogo.png";
+// 	const userAvatar = "https://api.dicebear.com/7.x/thumbs/svg?seed=user";
+
+// 	return (
+// 		<div className="overflow-y-auto px-4 py-6">
+// 			{messages.map((msg, index) => (
+// 				<MessageBubble
+// 					key={index}
+// 					sender={msg.sender}
+// 					avatar={msg.sender === "bot" ? botAvatar : userAvatar}
+// 					html={marked.parse(msg.text)} // or just msg.text if already HTML
+// 				/>
+// 			))}
+// 		</div>
+// 	);
+// }
