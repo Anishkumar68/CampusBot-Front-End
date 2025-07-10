@@ -62,7 +62,7 @@ export default function Sidebar({
 
 	return (
 		<div className="w-64 bg-gray-900 text-white h-screen p-4 flex flex-col">
-			<h2 className="text-xl font-bold mb-4">🧠 Chat History</h2>
+			<h2 className="text-xl font-bold mb-4">Chat History</h2>
 
 			<button
 				onClick={onNewChat}
