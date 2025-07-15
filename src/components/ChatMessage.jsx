@@ -2,8 +2,10 @@ import React from "react";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
 import { formatBotMessage } from "../utils/ChatFormatter";
+import chatbotLogo from "../assets/chatbotLogo.png";
 
-const botAvatar = "https://api.dicebear.com/7.x/bottts/svg?seed=bot";
+// const botAvatar = "https://api.dicebear.com/7.x/bottts/svg?seed=bot";
+// const botAvatar = chatbotLogo;
 const userAvatar = "https://api.dicebear.com/7.x/thumbs/svg?seed=user";
 
 export default function ChatMessage({ sender, message }) {
@@ -40,7 +42,7 @@ export default function ChatMessage({ sender, message }) {
 	return (
 		<div className="flex items-start justify-start gap-3 px-4 my-4">
 			<img
-				src={botAvatar}
+				src={chatbotLogo}
 				alt="Bot Avatar"
 				className="w-9 h-9 rounded-full shadow-sm"
 			/>
