@@ -22,8 +22,8 @@ export default function ChatInput({ onSend }) {
 	};
 
 	return (
-		<div className="flex items-center justify-around p-4 bg-white w-full max-w-3xl mx-auto rounded-lg">
-			<div className="relative w-full mr-4">
+		<div className="flex items-center justify-around p-4 bg-white w-full max-w-3xl mx-auto rounded-lg border-solid border-2 border-gray-400 shadow-lg">
+			<div className="relative w-full mr-4  ">
 				{/* Textarea for input */}
 				<textarea
 					rows={2}

@@ -9,14 +9,13 @@ export default function ChatPage() {
 	const token = getToken();
 	const userId = getUserId();
 
-	// 1. Hooks always run unconditionally
 	const [sessions, setSessions] = useState([]);
 	const [activeId, setActiveId] = useState(null);
 	const [messages, setMessages] = useState([
 		{
 			sender: "bot",
 			type: "welcome",
-			text: `Hi, I’m CampusBot, your university assistant. I'm here to answer commonly asked questions.\nI do best when you ask a short question, like "How do I apply?" How can I help you?`,
+			text: `Hi, I'm CampusBot, your university assistant. I'm here to answer commonly asked questions.\nI do best when you ask a short question, like "How do I apply?" How can I help you?`,
 			options: [
 				"How do I apply?",
 				"When is tuition due?",
@@ -28,7 +27,7 @@ export default function ChatPage() {
 		},
 	]);
 
-	// 2. Fallback UI *after* hooks
+	// Auth fallback
 	if (!token || !userId) {
 		return (
 			<div className="flex items-center justify-center h-screen text-red-600 font-semibold">
@@ -37,7 +36,7 @@ export default function ChatPage() {
 		);
 	}
 
-	// 3. Load chat sessions
+	// Load sessions
 	useEffect(() => {
 		fetch(`${API_BASE_URL}/chat/sessions/${userId}`, {
 			headers: {
@@ -46,7 +45,7 @@ export default function ChatPage() {
 			},
 		})
 			.then((res) => {
-				if (!res.ok) throw new Error(`Failed to load sessions: ${res.status}`);
+				if (!res.ok) throw new Error();
 				return res.json();
 			})
 			.then((data) => {
@@ -54,20 +53,15 @@ export default function ChatPage() {
 					setSessions(data);
 					if (data.length) setActiveId(data[0].session_id);
 				} else {
-					console.warn("Sessions response not an array:", data);
 					setSessions([]);
 				}
 			})
-			.catch((err) => {
-				console.error(err);
-				setSessions([]);
-			});
+			.catch(() => setSessions([]));
 	}, [userId, token]);
 
-	// 4. Load messages for active session
+	// Load messages
 	useEffect(() => {
 		if (!activeId) return;
-
 		fetch(`${API_BASE_URL}/chat/sessions/${activeId}/messages`, {
 			headers: {
 				"Content-Type": "application/json",
@@ -75,17 +69,13 @@ export default function ChatPage() {
 			},
 		})
 			.then((res) => {
-				if (res.status === 404) {
-					console.warn("No messages yet — new session.");
-					// Do not overwrite the existing welcome message
-					return null;
-				}
-				if (!res.ok) throw new Error(`Failed to load messages: ${res.status}`);
+				if (res.status === 404) return null;
+				if (!res.ok) throw new Error();
 				return res.json();
 			})
 			.then((data) => {
-				if (data === null) return; // skip if 404
-				if (Array.isArray(data)) {
+				if (data === null) return;
+				if (Array.isArray(data) && data.length > 0) {
 					setMessages(
 						data.map((m) => ({
 							sender: m.role === "user" ? "user" : "bot",
@@ -93,42 +83,68 @@ export default function ChatPage() {
 							followupsEnabled: false,
 						}))
 					);
-				} else {
-					console.warn("Unexpected messages data format:", data);
 				}
 			})
-			.catch((err) => {
-				console.error(err);
-				// Optional: keep existing messages or show UI alert
-			});
+			.catch(() => {});
 	}, [activeId, token]);
 
-	// 5. Send a chat message
 	const handleSend = async (userText) => {
-		if (!userText.trim()) return;
+		if (!userText || !userText.trim()) return;
+
+		const trimmedText = userText.trim();
+		const payload = {
+			user_id: userId,
+			message: trimmedText,
+			session_id: activeId,
+			model: "gpt-4.1-mini-2025-04-14",
+			temperature: 0.2,
+			active_pdf_type: "default",
+		};
+
 		setMessages((prev) => [
 			...prev,
-			{ sender: "user", text: userText },
+			{ sender: "user", text: trimmedText },
 			{ sender: "bot", type: "loader" },
 		]);
 
 		try {
-			const res = await fetch(`${API_BASE_URL}/chat`, {
+			const res = await fetch(`${API_BASE_URL}/chat/`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 					Authorization: `Bearer ${token}`,
 				},
-				body: JSON.stringify({
-					message: userText,
-
-					model: "openai",
-					temperature: 0.7,
-					chat_id: activeId,
-				}),
+				body: JSON.stringify(payload),
 			});
-			if (!res.ok) throw new Error(`Chat API error: ${res.status}`);
+
+			if (!res.ok) {
+				let errorMessage = "Sorry, I encountered an error. Please try again.";
+				if (res.status === 422) {
+					try {
+						const errorData = await res.json();
+						errorMessage =
+							errorData.detail || errorData.message || errorMessage;
+					} catch {}
+				}
+				throw new Error(errorMessage);
+			}
+
 			const data = await res.json();
+
+			// If new session, update activeId and session list
+			if (!activeId && data.session_id) {
+				setActiveId(data.session_id);
+				const newSession = {
+					session_id: data.session_id,
+					title:
+						trimmedText.length > 47
+							? trimmedText.substring(0, 47) + "..."
+							: trimmedText,
+					created_at: new Date().toISOString(),
+					active_pdf_type: "default",
+				};
+				setSessions((prev) => [newSession, ...prev]);
+			}
 
 			setMessages((prev) =>
 				prev.map((msg) =>
@@ -143,18 +159,19 @@ export default function ChatPage() {
 				)
 			);
 		} catch (error) {
-			console.error(error);
 			setMessages((prev) =>
 				prev.map((msg) =>
 					msg.type === "loader"
-						? { sender: "bot", text: "Server Error. Please try again later." }
+						? {
+								sender: "bot",
+								text: error.message,
+						  }
 						: msg
 				)
 			);
 		}
 	};
 
-	// 6. Create a new chat session (no user_id in body!)
 	const handleNewChat = async () => {
 		try {
 			const res = await fetch(`${API_BASE_URL}/chat/sessions`, {
@@ -164,20 +181,21 @@ export default function ChatPage() {
 					Authorization: `Bearer ${token}`,
 				},
 				body: JSON.stringify({
-					title: "Untitled Chat",
+					title: "New Chat",
 					active_pdf_type: "default",
 				}),
 			});
-			if (!res.ok) throw new Error(`Create session failed: ${res.status}`);
-			const newSession = await res.json();
 
+			if (!res.ok) throw new Error();
+
+			const newSession = await res.json();
 			setSessions((prev) => [newSession, ...prev]);
 			setActiveId(newSession.session_id);
 			setMessages([
 				{
 					sender: "bot",
 					type: "welcome",
-					text: "Hi, I’m CampusBot, your university assistant. How can I help you today?",
+					text: "Hi, I'm CampusBot, your university assistant. How can I help you today?",
 					options: [
 						"How do I apply?",
 						"When is tuition due?",
@@ -188,12 +206,11 @@ export default function ChatPage() {
 					followupsEnabled: true,
 				},
 			]);
-		} catch (error) {
-			console.error(error);
+		} catch {
+			alert("Failed to create new chat. Please try again.");
 		}
 	};
 
-	// 7. Quick-select followups
 	const handleQuickSelect = (optionText, msgIndex) => {
 		setMessages((prev) =>
 			prev.map((m, i) =>

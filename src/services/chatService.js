@@ -32,7 +32,7 @@ async function ensureValidToken() {
 	return true;
 }
 
-export async function sendMessageToBot(message, chat_id = null) {
+export async function sendMessageToBot(message, session_id = null) {
 	try {
 		const valid = await ensureValidToken();
 		if (!valid) return { success: false, error: "Session expired." };
@@ -41,13 +41,19 @@ export async function sendMessageToBot(message, chat_id = null) {
 			CHAT_API,
 			{
 				message,
-				chat_id,
-				model: "openai",
-				temperature: 0.7,
+				session_id, // ✅ Changed from chat_id to session_id
+				model: "gpt-4.1-mini-2025-04-14", // ✅ Changed from "openai" to "gpt-4.1-mini-2025-04-14-mini"
+				temperature: 0.2,
+				active_pdf_type: "default", // ✅ Added missing field
 			},
 			{ headers: HEADERS() }
 		);
-		return { success: true, response: response.data.response };
+
+		return {
+			success: true,
+			response: response.data.response,
+			session_id: response.data.session_id, // ✅ Return session_id for future use
+		};
 	} catch (error) {
 		console.error("API Error:", error.response?.data || error.message);
 
@@ -56,9 +62,15 @@ export async function sendMessageToBot(message, chat_id = null) {
 			window.location.href = "/login";
 		}
 
+		// ✅ Better error handling - show actual error details in development
+		const errorMessage =
+			error.response?.data?.detail ||
+			error.response?.data?.message ||
+			"Sorry, I couldn't connect to the server.";
+
 		return {
 			success: false,
-			error: "Sorry, I couldn't connect to the server.",
+			error: errorMessage,
 		};
 	}
 }
@@ -117,11 +129,9 @@ export async function createNewChatSession(userId) {
 		const valid = await ensureValidToken();
 		if (!valid) return null;
 
-		const response = await axios.post(
-			`${CHAT_API}/sessions`,
-			{ user_id: userId },
-			{ headers: HEADERS() }
-		);
+		const response = await axios.post(`${CHAT_API}/sessions`, {
+			headers: HEADERS(),
+		});
 		return response.data;
 	} catch (error) {
 		console.error("API Error:", error.response?.data || error.message);
