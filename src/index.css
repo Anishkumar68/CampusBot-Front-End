@@ -19,12 +19,12 @@ body {
 
 /* Target paragraphs inside list items rendered by prose */
 .prose li > p {
-  line-height: normal;
+  line-height: 1.3;
 }
 
 /* Remove padding/margin from list items themselves */
 .prose li {
   padding: 0;
   margin: 0;
-  line-height: 0;
+  line-height: normal;
 }

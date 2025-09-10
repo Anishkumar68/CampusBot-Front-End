@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { saveToken, saveRefreshToken, getToken } from "../../utils/auth";
+import { saveToken, saveRefreshToken } from "../../utils/auth";
 import { API_BASE_URL } from "../config"; // Update this import to match your project structure
 
 export default function Login() {
@@ -59,9 +59,12 @@ export default function Login() {
           onChange={handleChange}
         />
         {loading ? (
-          <p className="w-full bg-green-600 text-white py-2 rounded text-center">
+          <button
+            className="w-full bg-green-500 opacity-1 text-white py-2 rounded text-center"
+            disabled={loading}
+          >
             Loading...
-          </p>
+          </button>
         ) : (
           <button
             type="submit"
