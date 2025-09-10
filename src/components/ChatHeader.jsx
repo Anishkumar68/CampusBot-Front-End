@@ -19,7 +19,7 @@ export default function ChatHeader() {
 	}
 
 	return (
-		<div className="flex items-center p-4 z-10 mb-2 sticky w-full h-15 justify-between">
+		<div className="flex items-center p-4 z-10 mt-2 mb-2 sticky w-full h-15 justify-between">
 			{/* Logo + Title */}
 			<div className="flex items-center">
 				<img
@@ -34,7 +34,7 @@ export default function ChatHeader() {
 			<div className="flex items-center space-x-4">
 				{token ? (
 					<>
-						<span className="text-sm text-gray-600 truncate max-w-[150px]">
+						<span className="text-sm text-gray-600 truncate max-w-[150px] capitalize">
 							{userName}
 						</span>
 						<button
@@ -47,13 +47,13 @@ export default function ChatHeader() {
 				) : (
 					<>
 						<button
-							className="text-blue-600 hover:underline text-sm"
+							className="text-orange-600 hover:underline text-sm"
 							onClick={() => navigate("/login")}
 						>
 							Login
 						</button>
 						<button
-							className="text-blue-600 hover:underline text-sm"
+							className="text-orange-600 hover:underline text-sm"
 							onClick={() => navigate("/signup")}
 						>
 							Sign Up

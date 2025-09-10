@@ -2,7 +2,6 @@ import React from "react";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
 import { formatBotMessage } from "../utils/ChatFormatter";
-import chatbotLogo from "../assets/chatbotLogo.png";
 
 const botAvatar = "https://api.dicebear.com/7.x/bottts/svg?seed=bot";
 // const botAvatar = chatbotLogo;
@@ -26,7 +25,7 @@ export default function ChatMessage({ sender, message }) {
 		return (
 			<div className="flex items-start justify-end gap-2 px-4 my-2">
 				<div
-					className="flex flex-col w-fit max-w-2xl p-3 text-base bg-blue-100 text-gray-800 rounded-2xl rounded-br-none whitespace-pre-wrap break-words"
+					className="flex flex-col w-fit max-w-2xl p-3 text-base bg-orange-100 text-gray-800 rounded-2xl rounded-br-none whitespace-pre-wrap break-words"
 					dangerouslySetInnerHTML={{ __html: html }}
 				/>
 				<img
@@ -52,14 +51,14 @@ export default function ChatMessage({ sender, message }) {
     rounded-2xl rounded-bl-none whitespace-pre-wrap break-words shadow-md border border-gray-300
 
     prose prose-sm prose-gray
-    prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
+    prose-a:text-orange-600 prose-a:no-underline hover:prose-a:underline
     prose-headings:font-semibold prose-headings:text-gray-900 prose-headings:my-0
     prose-p:my-0 prose-p:leading-relaxed
     prose-ul:my-0 prose-ol:my-0 prose-li:my-0 prose-li:leading-relaxed
     prose-blockquote:my-0 prose-hr:my-0
     prose-pre:my-0 prose-pre:bg-gray-800 prose-pre:rounded prose-pre:overflow-x-auto prose-pre:font-mono prose-pre:text-sm
     cursor-text
-	target-blank:prose-a:text-blue-600 target-blank:prose-a:no-underline target-blank:prose-a:hover:underline
+	target-blank:prose-a:text-orange-600 target-blank:prose-a:no-underline target-blank:prose-a:hover:underline
 				"
 				dangerouslySetInnerHTML={{ __html: html }}
 			/>

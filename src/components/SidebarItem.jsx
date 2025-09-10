@@ -16,7 +16,7 @@ export default function SidebarItem({
 			onMouseEnter={() => setHover(true)}
 			onMouseLeave={() => setHover(false)}
 			className={`group flex items-center justify-between px-3 py-2 rounded cursor-pointer ${
-				isActive ? "bg-blue-700 text-white" : "hover:bg-gray-700 text-gray-200"
+				isActive ? " text-orange-500" : "hover:bg-gray-700 text-gray-200"
 			}`}
 		>
 			<span className="truncate max-w-[180px]">
