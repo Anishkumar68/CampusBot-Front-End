@@ -32,83 +32,79 @@ export default function ChatWindow({ messages, onQuickSelect, onSend }) {
 
   return (
     <div className="flex flex-col items-center justify-start h-screen bg-gray-100 ">
-      <div className="relative flex flex-col justify-between h-[90vh] w-full top-0 max-w-3xl ">
+      <div className="flex-1 w-full max-w-3xl">
         {/* Message Area */}
         {/* <div
           ref={scrollRef}
           onScroll={handleScroll}
           className="flex-1 p-4 rounded-t-sm"
         > */}
-          {messages.map((msg, idx) => (
-            <div key={idx}>
-              {msg.type === "welcome" ? (
-                <div className="flex flex-col gap-2">
-                  <div className="flex flex-col items-center gap-2">
-                    <img
-                      src={logo}
-                      alt="Bot Avatar"
-                      className="justify-center"
-                    />
-                    <h2 className="text-[60px] font-semibold mt-[-15px] text-gray-800">
-                      CampusBot
-                    </h2>
-                  </div>
+        {messages.map((msg, idx) => (
+          <div key={idx}>
+            {msg.type === "welcome" ? (
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-col items-center gap-2">
+                  <img src={logo} alt="Bot Avatar" className="justify-center" />
+                  <h2 className="text-[60px] font-semibold mt-[-15px] text-gray-800">
+                    CampusBot
+                  </h2>
+                </div>
 
-                  <div className="text-center w-full mt-4">
-                    <div className="flex flex-wrap mt-[-4px] justify-center gap-2">
-                      {msg.options?.map((option, i) => (
-                        <button
-                          key={i}
-                          onClick={() => handleQuickSelect(option, idx)}
-                          className={`px-4 py-1 border-2 border-orange-500 rounded-md hover:text-black hover:bg-orange-200 transition ${
-                            msg.followupsEnabled === false
-                              ? "opacity-50 cursor-not-allowed"
-                              : ""
-                          }`}
-                          disabled={msg.followupsEnabled === false}
-                        >
-                          {option}
-                        </button>
-                      ))}
-                    </div>
+                <div className="text-center w-full mt-4">
+                  <div className="flex flex-wrap mt-[-4px] justify-center gap-2">
+                    {msg.options?.map((option, i) => (
+                      <button
+                        key={i}
+                        onClick={() => handleQuickSelect(option, idx)}
+                        className={`px-4 py-1 border-2 border-orange-500 rounded-md hover:text-black hover:bg-orange-200 transition ${
+                          msg.followupsEnabled === false
+                            ? "opacity-50 cursor-not-allowed"
+                            : ""
+                        }`}
+                        disabled={msg.followupsEnabled === false}
+                      >
+                        {option}
+                      </button>
+                    ))}
                   </div>
                 </div>
-              ) : msg.type === "loader" ? (
-                <div className="flex justify-start my-2">
-                  <div className="bg-gray-200 text-gray-600 px-3 py-1 rounded-lg text-sm">
-                    Bot is typing...
-                  </div>
-                  {/* Auto-scroll when loader appears */}
-                  {/* {scrollToBottom()} */}
+              </div>
+            ) : msg.type === "loader" ? (
+              <div className="flex justify-start my-2">
+                <div className="bg-gray-200 text-gray-600 px-3 py-1 rounded-lg text-sm">
+                  Bot is typing...
                 </div>
-              ) : (
-                <>
-                  <ChatMessage
-                    sender={msg.sender}
-                    message={msg.text}
+                {/* Auto-scroll when loader appears */}
+                {/* {scrollToBottom()} */}
+              </div>
+            ) : (
+              <>
+                <ChatMessage
+                  sender={msg.sender}
+                  message={msg.text}
+                  followups={msg.followups}
+                  followupsEnabled={msg.followupsEnabled}
+                  msgIndex={idx}
+                  onQuickSelect={handleQuickSelect}
+                />
+
+                {msg.sender === "bot" && msg.followups && (
+                  <QuickButtons
                     followups={msg.followups}
                     followupsEnabled={msg.followupsEnabled}
                     msgIndex={idx}
                     onQuickSelect={handleQuickSelect}
                   />
+                )}
+              </>
+            )}
+          </div>
+        ))}
+        {/* <div ref={bottomRef} /> */}
+      </div>
 
-                  {msg.sender === "bot" && msg.followups && (
-                    <QuickButtons
-                      followups={msg.followups}
-                      followupsEnabled={msg.followupsEnabled}
-                      msgIndex={idx}
-                      onQuickSelect={handleQuickSelect}
-                    />
-                  )}
-                </>
-              )}
-            </div>
-          ))}
-          {/* <div ref={bottomRef} /> */}
-        </div>
-
-        {/* Scroll Down Button */}
-        {/* {showScrollBtn && (
+      {/* Scroll Down Button */}
+      {/* {showScrollBtn && (
           <div className="absolute bottom-24 right-4">
           <button
             onClick={scrollToBottom}
@@ -120,10 +116,10 @@ export default function ChatWindow({ messages, onQuickSelect, onSend }) {
           </div>
         )} */}
 
-        {/* Input Area */}
-        <div className="flex-shrink-0 sticky bottom-0 bg-gray-100 pt-2 pb-4 justify-center items-center">
-          <ChatInput onSend={onSend} />
-        </div>
+      {/* Input Area */}
+      <div className="p-4 w-full max-w-3xl backdrop:blur-md sticky bottom-0 mt-4">
+        <ChatInput onSend={onSend} />
+      </div>
       {/* </div> */}
     </div>
   );

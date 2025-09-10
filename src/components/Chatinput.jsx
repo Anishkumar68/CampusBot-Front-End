@@ -22,33 +22,50 @@ export default function ChatInput({ onSend }) {
   };
 
   return (
-    <div className="flex p-4 mx-6 items-center justify-around bg-white w-full max-w-3xl rounded-lg border-solid border-2 border-gray-400 shadow-lg">
-      <div className="relative w-full mr-4  ">
-        {/* Textarea for input */}
+    <div className="bg-white dark:bg-[#fff] shadow border border-gray-300 rounded-[28px] p-2.5 w-full max-w-full grid grid-cols-[auto_1fr_auto] items-end gap-2">
+      {/* Leading section (e.g., Attach button) */}
+      <div className="flex items-center">
+        <button
+          type="button"
+          className="flex items-center justify-center h-9 w-9 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-100"
+          aria-label="Attach file"
+        >
+          +
+        </button>
+      </div>
+
+      {/* Input area */}
+      <div className="relative w-full">
         <textarea
-          rows={2}
+          rows={1}
           maxLength={2000}
-          className="w-full p-2 focus:outline-none resize-none  "
+          className="w-full resize-none overflow-hidden bg-transparent text-sm p-2.5 focus:outline-none placeholder:text-gray-400"
           placeholder="Type your message..."
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}
           disabled={loading}
         />
+
+        {/* Loading spinner */}
         {loading && (
-          <div className="absolute inset-y-0 right-3 flex items-center">
-            <div className="loader border-t-2 border-orange-500 border-solid rounded-full w-4 h-4 animate-spin"></div>
+          <div className="absolute right-2 top-2 flex items-center">
+            <div className="w-4 h-4 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
         )}
       </div>
 
-      <button
-        onClick={handleSend}
-        disabled={loading || !text.trim()}
-        className="px-3 py-2 bg-black hover:bg-gray-600 text-white rounded-full  disabled:cursor-not-allowed"
-      >
-        &#x2191;
-      </button>
+      {/* Send Button */}
+      <div className="flex items-center">
+        <button
+          onClick={handleSend}
+          disabled={loading || !text.trim()}
+          className="h-9 w-9 flex items-center justify-center rounded-full bg-black text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          aria-label="Send"
+        >
+          &#x2191;
+        </button>
+      </div>
     </div>
   );
 }

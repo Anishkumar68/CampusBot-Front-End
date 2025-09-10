@@ -210,32 +210,30 @@ export default function ChatPage() {
   };
 
   return (
-	
-  <div className="flex flex-col md:flex-row h-screen w-screen overflow-hidden">
-    {/* Sidebar */}
-    <div className="w-full md:w-64 h-64 md:h-full bg-gray-900 text-white">
-      <Sidebar
-        sessions={sessions}
-        activeId={activeId}
-        onSelectSession={setActiveId}
-        onNewChat={handleNewChat}
-        setSessions={setSessions}
-        setActiveId={setActiveId}
-      />
-    </div>
-
-    {/* Chat Area */}
-    <div className="flex-1 flex flex-col bg-gray-100 h-full">
-      <ChatHeader />
-      <div className="flex-1 overflow-y-auto">
-        <ChatWindow
-          messages={messages}
-          onQuickSelect={handleQuickSelect}
-          onSend={handleSend}
+    <div className="flex flex-col md:flex-row h-screen w-screen overflow-hidden">
+      {/* Sidebar */}
+      <div className="w-full md:w-64 h-64 md:h-full bg-gray-900 text-white">
+        <Sidebar
+          sessions={sessions}
+          activeId={activeId}
+          onSelectSession={setActiveId}
+          onNewChat={handleNewChat}
+          setSessions={setSessions}
+          setActiveId={setActiveId}
         />
       </div>
-    </div>
-  </div>
-);
 
+      {/* Chat Area */}
+      <div className="flex-1 flex flex-col bg-gray-100 h-full">
+        <div className="flex-1 overflow-y-auto">
+          <ChatHeader />
+          <ChatWindow
+            messages={messages}
+            onQuickSelect={handleQuickSelect}
+            onSend={handleSend}
+          />
+        </div>
+      </div>
+    </div>
+  );
 }
