@@ -41,10 +41,10 @@ export async function sendMessageToBot(message, session_id = null) {
 			CHAT_API,
 			{
 				message,
-				session_id, // ✅ Changed from chat_id to session_id
-				model: "gpt-4.1-mini-2025-04-14", // ✅ Changed from "openai" to "gpt-4.1-mini-2025-04-14-mini"
+				session_id, 
+				model: "gpt-4.1-mini-2025-04-14", 
 				temperature: 0.2,
-				active_pdf_type: "default", // ✅ Added missing field
+				active_pdf_type: "default",
 			},
 			{ headers: HEADERS() }
 		);
@@ -52,7 +52,7 @@ export async function sendMessageToBot(message, session_id = null) {
 		return {
 			success: true,
 			response: response.data.response,
-			session_id: response.data.session_id, // ✅ Return session_id for future use
+			session_id: response.data.session_id, 
 		};
 	} catch (error) {
 		console.error("API Error:", error.response?.data || error.message);
@@ -62,7 +62,7 @@ export async function sendMessageToBot(message, session_id = null) {
 			window.location.href = "/login";
 		}
 
-		// ✅ Better error handling - show actual error details in development
+		
 		const errorMessage =
 			error.response?.data?.detail ||
 			error.response?.data?.message ||
@@ -75,7 +75,7 @@ export async function sendMessageToBot(message, session_id = null) {
 	}
 }
 
-// ✅ Universal GET Helper
+// Universal GET Helper
 async function apiGet(url) {
 	try {
 		const valid = await ensureValidToken();
@@ -89,37 +89,37 @@ async function apiGet(url) {
 	}
 }
 
-// ✅ Get full chat history
+// Get full chat history
 export async function getChatHistory(chatId) {
 	return apiGet(`${CHAT_API}/history/${chatId}`);
 }
 
-// ✅ Get all sessions for a user
+// Get all sessions for a user
 export async function getAllChatSessions(userId) {
 	return apiGet(`${CHAT_API}/sessions/${userId}`);
 }
 
-// ✅ Get chat summary
+//  Get chat summary
 export async function getChatSummary(chatId) {
 	return apiGet(`${CHAT_API}/summary/${chatId}`);
 }
 
-// ✅ Get chat sentiment
+// Get chat sentiment
 export async function getChatSentiment(chatId) {
 	return apiGet(`${CHAT_API}/sentiment/${chatId}`);
 }
 
-// ✅ Get chat intent
+// Get chat intent
 export async function getChatIntent(chatId) {
 	return apiGet(`${CHAT_API}/intent/${chatId}`);
 }
 
-// ✅ Get chat entities
+// Get chat entities
 export async function getChatEntities(chatId) {
 	return apiGet(`${CHAT_API}/entities/${chatId}`);
 }
 
-// ✅ Get chat topics
+// Get chat topics
 export async function getChatTopics(chatId) {
 	return apiGet(`${CHAT_API}/topics/${chatId}`);
 }
