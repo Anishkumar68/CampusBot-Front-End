@@ -2,26 +2,27 @@ import ChatMessage from "./ChatMessage";
 import ChatInput from "./Chatinput";
 import QuickButtons from "./QuickButtons";
 import logo from "../assets/chatbotLogo.png";
-import { useRef, useEffect, useState } from "react";
+
+// import { useRef, useEffect, useState } from "react";
 
 export default function ChatWindow({ messages, onQuickSelect, onSend }) {
-  const scrollRef = useRef();
-  const bottomRef = useRef();
-  const [showScrollBtn, setShowScrollBtn] = useState(false);
+  // const scrollRef = useRef();
+  // const bottomRef = useRef();
+  // const [showScrollBtn, setShowScrollBtn] = useState(false);
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  // useEffect(() => {
+  //   bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  // }, [messages]);
 
-  const handleScroll = () => {
-    if (!scrollRef.current) return;
-    const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
-    setShowScrollBtn(scrollHeight - scrollTop > clientHeight + 150);
-  };
+  // const handleScroll = () => {
+  //   if (!scrollRef.current) return;
+  //   const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+  //   setShowScrollBtn(scrollHeight - scrollTop > clientHeight + 150);
+  // };
 
-  const scrollToBottom = () => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  // const scrollToBottom = () => {
+  //   bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  // };
 
   const handleQuickSelect = (option, index) => {
     if (onQuickSelect) {
@@ -33,11 +34,11 @@ export default function ChatWindow({ messages, onQuickSelect, onSend }) {
     <div className="flex flex-col items-center justify-start h-screen bg-gray-100 ">
       <div className="relative flex flex-col justify-between h-[90vh] w-full top-0 max-w-3xl ">
         {/* Message Area */}
-        <div
+        {/* <div
           ref={scrollRef}
           onScroll={handleScroll}
           className="flex-1 p-4 rounded-t-sm"
-        >
+        > */}
           {messages.map((msg, idx) => (
             <div key={idx}>
               {msg.type === "welcome" ? (
@@ -78,7 +79,7 @@ export default function ChatWindow({ messages, onQuickSelect, onSend }) {
                     Bot is typing...
                   </div>
                   {/* Auto-scroll when loader appears */}
-                  {scrollToBottom()}
+                  {/* {scrollToBottom()} */}
                 </div>
               ) : (
                 <>
@@ -103,11 +104,11 @@ export default function ChatWindow({ messages, onQuickSelect, onSend }) {
               )}
             </div>
           ))}
-          <div ref={bottomRef} />
+          {/* <div ref={bottomRef} /> */}
         </div>
 
         {/* Scroll Down Button */}
-        {showScrollBtn && (
+        {/* {showScrollBtn && (
           <div className="absolute bottom-24 right-4">
           <button
             onClick={scrollToBottom}
@@ -117,13 +118,13 @@ export default function ChatWindow({ messages, onQuickSelect, onSend }) {
             &#8595;
           </button>
           </div>
-        )}
+        )} */}
 
         {/* Input Area */}
         <div className="flex-shrink-0 sticky bottom-0 bg-gray-100 pt-2 pb-4 justify-center items-center">
           <ChatInput onSend={onSend} />
         </div>
-      </div>
+      {/* </div> */}
     </div>
   );
 }
