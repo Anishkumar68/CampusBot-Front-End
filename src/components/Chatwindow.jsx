@@ -51,7 +51,7 @@ export default function ChatWindow({ messages, onQuickSelect, onSend }) {
                 </div>
 
                 <div className="text-center w-full mt-4">
-                  <div className="flex flex-wrap mt-[-4px] justify-center gap-2">
+                  <div className="flex flex-wrap mt-[-4px] mb-4 justify-center gap-2">
                     {msg.options?.map((option, i) => (
                       <button
                         key={i}
@@ -71,8 +71,8 @@ export default function ChatWindow({ messages, onQuickSelect, onSend }) {
               </div>
             ) : msg.type === "loader" ? (
               <div className="flex justify-start my-2">
-                <div className="bg-gray-200 text-gray-600 px-3 py-1 rounded-lg text-sm">
-                  Bot is typing...
+                <div className="bg-gray-200 mt-2 text-gray-600 px-3 py-1 rounded-lg text-sm">
+                  Bot is thinking...
                 </div>
                 {/* Auto-scroll when loader appears */}
                 {/* {scrollToBottom()} */}
