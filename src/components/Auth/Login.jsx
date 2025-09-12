@@ -1,17 +1,20 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { saveToken, saveRefreshToken } from "../../utils/auth";
-import { API_BASE_URL } from "../config"; // Update this import to match your project structure
+import { API_BASE_URL } from "../config";
 
 export default function Login() {
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [msg, setMsg] = useState("");
-  const [loading, setLoading] = useState(false);
+	const [form, setForm] = useState({ email: "", password: "" });
+	const [msg, setMsg] = useState("");
+	const [loading, setLoading] = useState(false);
 
-  const navigate = useNavigate();
+	const navigate = useNavigate();
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+	const handleChange = (e) => {
+		setForm({ ...form, [e.target.name]: e.target.value });
+		// Clear error message when user starts typing
+		if (msg) setMsg("");
+	};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
